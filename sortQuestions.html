@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sort Questions</title>
+</head>
+<body>
+  <h1>Sort Questions</h1>
+  <button onclick="sortQuestions()">Sort</button>
+  <div id="questionList"></div>
+  <script src="server.js"></script>
+  <script>
+    function sortQuestions() {
+      fetch('/sortQuestions')
+        .then(response => response.json())
+        .then(questions => displayQuestions(questions))
+        .catch(error => console.error(error));
+    }
+     
+	function deleteQuestion(serialNumber) {
+  fetch(`/deleteQuestion/${serialNumber}`, { method: 'DELETE' })
+    .then(response => response.text())
+    .then(message => {
+      alert(message);
+      sortQuestions();
+    })
+    .catch(error => console.error(error));
+}
+
+    function displayQuestions(questions) {
+  const questionList = document.getElementById('questionList');
+  questionList.innerHTML = '';
+
+  questions.forEach(question => {
+    const questionDiv = document.createElement('div');
+    questionDiv.innerHTML = `
+      <p>Serial Number: ${question.serialNumber}</p>
+      <p>Question: ${question.question}</p>
+      <p>Answers: ${question.answer1}, ${question.answer2}, ${question.answer3}, ${question.answer4}</p>
+      <p>Correct Answer: ${question.correctAnswer}</p>
+      <button onclick="deleteQuestion('${question.serialNumber}')">Delete</button>
+      <hr>
+    `;
+    questionList.appendChild(questionDiv);
+  });
+}
+
+
+    sortQuestions();
+  </script>
+</body>
+</html>
